@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Flask Backend</title>
+  </head>
+
+  <body>
+    <h1>Welcome {{ username }}</h1>
+    <ul>
+      User posts: {% for post in posts %}
+      <li>
+        <strong>{{post.author}} </strong> said: "{{post.text}}" <br />
+        {% if post.likes %} {{post.likes}} likes {% endif %}
+      </li>
+      {% endfor %} {% with messages = get_flashed_messages() %} {% if messages
+      %} {% for message in messages%}
+      <li>{{ message }}</li>
+      {% endfor %} {% endif %} {% endwith %} {% block extended %}{% endblock %}
+    </ul>
+  </body>
+</html>
