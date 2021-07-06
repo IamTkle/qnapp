@@ -29,6 +29,11 @@ def serve_static_react():
     elif 'username' in session:
         curr_user = db.session.query(models.User).get(session['qnappTkn'])
 
+        if not curr_user: #database reset
+            db.session.add(models.User(qnapp_id=session['qnappTkn'],username=session['username'], actions_counter=0))
+            db.session.commit()
+            curr_user = db.session.query(models.User).get(session['qnappTkn'])
+
         next_prompt = generate_prompt(curr_user)
 
         return render_template('index.html', username=session['username'], \
@@ -36,7 +41,7 @@ def serve_static_react():
             qid=next_prompt['qid'] if 'qid' in next_prompt else "",\
             sensitive=next_prompt['sensitive'] if next_prompt['sensitive'] is True else "")
 
-    return render_template('index.html', promptType="q", prompt="It's your turn to ask a question")
+    return render_template('index.html', promptType="q", prompt="It's your turn to ask a question", sensitive="")
 
 @flaskapp.route('/api/name', methods=['POST'])
 def set_username():
