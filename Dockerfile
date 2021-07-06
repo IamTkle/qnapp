@@ -2,12 +2,16 @@ FROM python:3.9
 
 WORKDIR /app
 
-COPY . .
+COPY requirements.txt . 
 
 RUN pip install -r requirements.txt
 
-EXPOSE 5000
+COPY . .
 
-ENTRYPOINT ["flask"]
+ENV PORT $PORT
 
-CMD ["run", "host", "0.0.0.0:5000"]
+# ENTRYPOINT ["flask"]
+
+CMD ["sh", "-c", "flask run --host 0.0.0.0 --port $PORT"] 
+
+# CMD ["run", "--host", "0.0.0.0", "--port", "$PORT"]
