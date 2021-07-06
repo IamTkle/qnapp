@@ -34,7 +34,7 @@ def serve_static_react():
         return render_template('index.html', username=session['username'], \
             promptType=next_prompt["promptType"], prompt=next_prompt["prompt"],\
             qid=next_prompt['qid'] if 'qid' in next_prompt else "",\
-            sensitive=next_prompt['sensitive'] if next_prompt['sensitive'] else "")
+            sensitive=next_prompt['sensitive'] if next_prompt['sensitive'] is True else "")
 
     return render_template('index.html', promptType="q", prompt="It's your turn to ask a question")
 
@@ -121,7 +121,7 @@ def generate_prompt(curr_user)->dict:
 
             if not chosen_question:
                 print( f"count: {db.session.query(models.Question).count() }")
-                chosen_question = db.session.query(models.Question).get(randint(0, db.session.query(models.Question).count() ))
+                chosen_question = db.session.query(models.Question).get(randint(1, db.session.query(models.Question).count() ))
             
             if chosen_question and chosen_question.author is not curr_user:
                 i = 5

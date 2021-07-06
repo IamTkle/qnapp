@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="App for asking and answering questions" />
-    <!-- <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="manifest" href="/manifest.json" /> -->
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
     <title>QNApp</title>
     <link href="/static/css/main.b9976071.chunk.css" rel="stylesheet" />
 
@@ -19,9 +19,9 @@
       var promptType = "{{promptType}}";
       var prompt = "{{prompt}}";
       var qid = "{{qid}}";
-      var sensitive = "{{sensitive}}";
+      var sensitive = +"{{sensitive}}";
     </script>
-    {% endif %}
+    {%endif%}
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -176,13 +176,7 @@
         t();
       })([]);
     </script>
-    <script
-      src="/static/js/2.573a8701.chunk.js"
-      type="text/javascript"
-    ></script>
-    <script
-      src="/static/js/main.5813ed56.chunk.js"
-      type="text/javascript"
-    ></script>
+    <script src="/static/js/2.573a8701.chunk.js"></script>
+    <script src="/static/js/main.ea55d003.chunk.js"></script>
   </body>
 </html>
