@@ -26,7 +26,56 @@ def serve_static_react():
         while db.session.query(models.User).get(session['qnappTkn']) is not None:
             session['qnappTks'] = randint(10000, 100000)
 
-    elif 'username' in session:
+    # elif 'username' in session:
+    #     curr_user = db.session.query(models.User).get(session['qnappTkn'])
+
+    #     if not curr_user: #database reset
+    #         db.session.add(models.User(qnapp_id=session['qnappTkn'],username=session['username'], actions_counter=0))
+    #         db.session.commit()
+    #         curr_user = db.session.query(models.User).get(session['qnappTkn'])
+
+    #     next_prompt = generate_prompt(curr_user)
+
+    #     return render_template('index.html', username=session['username'], \
+    #         promptType=next_prompt["promptType"], prompt=next_prompt["prompt"],\
+    #         qid=next_prompt['qid'] if 'qid' in next_prompt else "",\
+    #         sensitive=next_prompt['sensitive'] if next_prompt['sensitive'] is True else "")
+
+    return flaskapp.send_static_file('index.html')
+    # return render_template('index.html', promptType="q", prompt="It's your turn to ask a question", sensitive="")
+
+
+@flaskapp.route('/api/name', methods=['POST', 'GET'])
+def set_username():
+    if request.method == 'POST':
+        if 'qnappTkn' in session:
+            inc_req = request.json
+            chosenUsername = str(inc_req['username'])
+
+            if not re.search(r"[\\p{P}\\p{S}]", chosenUsername, re.UNICODE):
+                # resp = make_response('')
+                # resp.status_code = 200
+                # resp.set_cookie("username", chosenUsername, samesite="strict")
+                session['username'] = chosenUsername
+
+                db.session.add(models.User(qnapp_id=session['qnappTkn'],username=session['username'], actions_counter=0))
+                db.session.commit()
+
+                print(f"saved to database {session['qnappTkn']}")
+                return ('', 200)
+            else:
+                return ({'error': 'Invalid input, no special characters allowed'}, 400)
+        else:
+            return {'error': 'Invalid user token'}, 403
+    else: #Must be GET
+        if 'qnappTkn' in session and 'username' in session:
+            return {'username': session['username']}, 200
+        else:
+            return {'username': False}, 200
+
+@flaskapp.route('/api/initialprompt', methods=['GET'])
+def generate_initial_prompt():
+    if 'qnappTkn' in session and 'username' in session:
         curr_user = db.session.query(models.User).get(session['qnappTkn'])
 
         if not curr_user: #database reset
@@ -36,34 +85,9 @@ def serve_static_react():
 
         next_prompt = generate_prompt(curr_user)
 
-        return render_template('index.html', username=session['username'], \
-            promptType=next_prompt["promptType"], prompt=next_prompt["prompt"],\
-            qid=next_prompt['qid'] if 'qid' in next_prompt else "",\
-            sensitive=next_prompt['sensitive'] if next_prompt['sensitive'] is True else "")
-
-    return render_template('index.html', promptType="q", prompt="It's your turn to ask a question", sensitive="")
-
-@flaskapp.route('/api/name', methods=['POST'])
-def set_username():
-    if 'qnappTkn' in session:
-        inc_req = request.json
-        chosenUsername = str(inc_req['username'])
-
-        if not re.search(r"[\\p{P}\\p{S}]", chosenUsername, re.UNICODE):
-            # resp = make_response('')
-            # resp.status_code = 200
-            # resp.set_cookie("username", chosenUsername, samesite="strict")
-            session['username'] = chosenUsername
-
-            db.session.add(models.User(qnapp_id=session['qnappTkn'],username=session['username'], actions_counter=0))
-            db.session.commit()
-
-            print(f"saved to database {session['qnappTkn']}")
-            return ('', 200)
-        else:
-            return ({'error': 'Invalid input, no special characters allowed'}, 400)
+        return next_prompt, 200
     else:
-        return {'error': 'Invalid user token'}, 403
+        return 'Invalid user', 403
 
 @flaskapp.route('/api/questions', methods=['POST'])
 def handle_question():
